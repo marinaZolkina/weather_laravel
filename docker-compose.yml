@@ -1,0 +1,30 @@
+
+version: '2'
+
+services:
+    wi-mariadb:
+        container_name: wi_mariadb
+        image: docker.io/bitnami/mariadb:10.6
+        environment:
+            - MARIADB_PASSWORD=yes
+            - MARIADB_USER=laravel_app
+            - MARIADB_DATABASE=laravel_app_db
+        ports:
+            - '8171:3306'
+        volumes:
+            - './mariadb-persistence:/bitnami/mariadb'
+        restart: always
+    wi-laravel:
+        container_name: wi_laravel
+        image: docker.io/bitnami/laravel:9
+        ports:
+            - '8170:8000'
+        environment:
+            - DB_HOST=wi-mariadb
+            - DB_PORT=3306
+            - DB_USERNAME=laravel_app
+            - DB_DATABASE=laravel_app_db
+        volumes:
+            - './:/app'
+        depends_on:
+            - wi-mariadb
